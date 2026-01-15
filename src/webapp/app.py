@@ -184,8 +184,18 @@ if uploaded:
         st.subheader("Process Image")
         if st.button("🚀 Start OCR Extraction", type="primary", use_container_width=True):
             with st.spinner("Analyzing handwriting..."):
-                img = preprocess_image(st.session_state.temp_file_path)
-                text = extract_text(img)
+                try:
+                    img = preprocess_image(st.session_state.temp_file_path)
+                    text = extract_text(img)
+                except Exception as e:
+                    st.error(
+                        "OCR engine is not available on this system. "
+                        "Please ensure Tesseract is installed. If you're running on "
+                        "Streamlit Cloud, add `tesseract-ocr` to a `packages.txt` "
+                        "file in your repository."
+                    )
+                    raise
+
                 st.session_state.ocr_text = text
                 st.session_state.cleaned_text = clean(text)
                 st.session_state.summary = None
